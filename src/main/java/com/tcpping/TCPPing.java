@@ -5,10 +5,10 @@ import com.tcpping.sockets.Pitcher;
 import org.apache.commons.cli.*;
 
 public class TCPPing {
-
-    enum Mode {
-        CATCHER, PITCHER
-    }
+    private int port = 9000;
+    private String ip = "192.168.0.1";
+    private int mps = 30;
+    private int size = 1000;
 
     private static Options setCliOptions () {
         Options options = new Options();
@@ -27,23 +27,8 @@ public class TCPPing {
         return parser.parse( options, args);
     }
 
-    private static Mode handleMode(String mode) {
-        Mode selectedMode = null;
-
-        switch (mode) {
-            case "-p": {
-                selectedMode = Mode.PITCHER;
-                break;
-            }
-            case "-c": {
-                selectedMode = Mode.CATCHER;
-                break;
-            }
-        }
-        return selectedMode;
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws MissingArgumentException {
+        TCPPing app = new TCPPing();
         CommandLine cmd;
 
         try {
@@ -52,18 +37,30 @@ public class TCPPing {
             throw new Error(e);
         }
 
-        String mode = cmd.getOptionValue("port");
+        if (cmd.hasOption("port")) {
+            app.port = Integer.parseInt(cmd.getOptionValue("port"));
+        }
 
-        System.out.println(mode);
+        if (cmd.hasOption("bind")) {
+            app.ip = cmd.getOptionValue("bind");
+        }
 
-        Mode selectedMode = handleMode(args[0]);
+        if (cmd.hasOption("mps")) {
+            app.mps = Integer.parseInt(cmd.getOptionValue("mps"));
+        }
 
-        if (selectedMode == Mode.CATCHER) {
+        if (cmd.hasOption("size")) {
+            app.size = Integer.parseInt(cmd.getOptionValue("size"));
+        }
+
+        if (cmd.hasOption("c")) {
             Catcher catcher = new Catcher();
-            catcher.Server(6000);
-        } else if (selectedMode == Mode.PITCHER) {
+            catcher.Server(app.port);
+        } else if (cmd.hasOption("c")) {
             Pitcher pitcher = new Pitcher();
-            pitcher.Client("192.168.8.107", 6000);
+            pitcher.Client(app.ip, app.port);
+        } else {
+            throw new MissingArgumentException("You need to select a valid mode for the application to run in");
         }
     }
 }

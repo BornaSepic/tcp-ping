@@ -9,21 +9,31 @@ import java.net.Socket;
 public class Catcher {
 
     public void Server(int port) {
+        ObjectInputStream objectInputStream;
+        ObjectOutputStream objectOutputStream;
+
         try {
             ServerSocket server = new ServerSocket(port);
 
             Socket socket = server.accept();
 
-            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
             String message = "";
 
             while (!message.equals("OVER")) {
                 try {
-                    Message recievedMessage = (Message) objectInputStream.readObject();
-                    message = recievedMessage.message;
+                    Message receivedMessage = (Message) objectInputStream.readObject();
+                    message = receivedMessage.message;
 
-                    System.out.println(recievedMessage.message);
-                    System.out.println(recievedMessage.timeMessageCreated);
+                    receivedMessage.setTimeMessageArrived((int) System.currentTimeMillis());
+
+                    System.out.println(receivedMessage.message);
+                    System.out.println(receivedMessage.timeMessageCreated);
+
+                    objectOutputStream.writeObject(receivedMessage);
+
                 } catch (IOException i) {
                     throw new Error(i);
                 }

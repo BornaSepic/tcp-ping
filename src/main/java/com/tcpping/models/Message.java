@@ -1,7 +1,6 @@
 package com.tcpping.models;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 public class Message implements Serializable {
     public String message;
@@ -18,6 +17,14 @@ public class Message implements Serializable {
         }
 
         return sb.toString();
+    }
+
+    public void setTimeMessageArrived(int timeMessageArrived) {
+        this.timeMessageArrived = timeMessageArrived;
+    }
+
+    public void setTimeMessageReturned(int timeMessageReturned) {
+        this.timeMessageReturned = timeMessageReturned;
     }
 
     public Message(int messageSize) {

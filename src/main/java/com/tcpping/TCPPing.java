@@ -54,12 +54,15 @@ public class TCPPing {
         }
 
         if (cmd.hasOption("c")) {
+
             Catcher catcher = new Catcher();
             catcher.Server(app.port);
+
         } else if (cmd.hasOption("p")) {
+
             Pitcher pitcher = new Pitcher();
-            System.out.println(app.ip);
             pitcher.Client(app.ip, app.port, app.mps);
+
         } else {
             throw new MissingArgumentException("You need to select a valid mode for the application to run in");
         }

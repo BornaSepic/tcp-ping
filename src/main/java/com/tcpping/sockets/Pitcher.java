@@ -8,8 +8,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Pitcher {
-    private DataOutputStream out;
     private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     private int messagesSent = 0;
     private int messagesPerSecond = 30;
@@ -40,17 +40,38 @@ public class Pitcher {
     public void Client(String ip, int port, int mps) {
         messagesPerSecond = mps;
         Socket socket;
-        BufferedReader input;
         try {
             socket = new Socket(ip, port);
-            input = new BufferedReader(new InputStreamReader(System.in));
-            out = new DataOutputStream(socket.getOutputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in = new DataInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(out);
+            objectInputStream = new ObjectInputStream(in);
+
         } catch (IOException u) {
             throw new Error(u);
         }
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(runPitcher(), 0, 1000);
+
+        String message = "";
+
+        while (!message.equals("OVER")) {
+            try {
+                Message receivedMessage = (Message) objectInputStream.readObject();
+                if (receivedMessage != null) {
+                    message = receivedMessage.message;
+
+                    receivedMessage.setTimeMessageReturned((int) System.currentTimeMillis());
+
+                    System.out.println(receivedMessage.message);
+                    System.out.println(receivedMessage.timeMessageCreated);
+                    System.out.println(receivedMessage.timeMessageArrived);
+                    System.out.println(receivedMessage.timeMessageReturned);
+                }
+            } catch (IOException | ClassNotFoundException i) {
+                throw new Error(i);
+            }
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.tcpping.sockets;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import com.tcpping.models.Message;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,22 +14,21 @@ public class Catcher {
 
             Socket socket = server.accept();
 
-            DataInputStream in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             String message = "";
 
-            while (!message.equals("Over")) {
+            while (!message.equals("OVER")) {
                 try {
-                    message = in.readUTF();
-                    System.out.println(message);
+                    Message recievedMessage = (Message) objectInputStream.readObject();
+                    message = recievedMessage.message;
+
+                    System.out.println(recievedMessage.message);
+                    System.out.println(recievedMessage.timeMessageCreated);
                 } catch (IOException i) {
                     throw new Error(i);
                 }
             }
-
-            socket.close();
-            in.close();
-        } catch (IOException i) {
+        } catch (IOException | ClassNotFoundException i) {
             throw new Error(i);
         }
     }

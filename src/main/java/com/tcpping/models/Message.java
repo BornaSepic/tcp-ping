@@ -3,10 +3,16 @@ package com.tcpping.models;
 import java.io.Serializable;
 
 public class Message implements Serializable {
+    public int messageGroupId;
+    private int id;
     public String message;
-    public int timeMessageCreated;
-    public int timeMessageArrived;
-    public int timeMessageReturned;
+
+    private int timeMessageCreated;
+    private int timeMessageArrived;
+    private int timeMessageReturned;
+
+    public int tripTimeToServer;
+    public int tripTimeFromServer;
 
     private String generateMessage(int messageSize) {
         StringBuilder sb = new StringBuilder(messageSize);
@@ -19,17 +25,37 @@ public class Message implements Serializable {
         return sb.toString();
     }
 
+    private void setTimeMessageCreated(int timeMessageCreated) {
+        this.timeMessageCreated = timeMessageCreated;
+    }
+
     public void setTimeMessageArrived(int timeMessageArrived) {
         this.timeMessageArrived = timeMessageArrived;
+        this.setTripTimeToServer();
     }
 
     public void setTimeMessageReturned(int timeMessageReturned) {
         this.timeMessageReturned = timeMessageReturned;
+        this.setTripTimeFromServer();
     }
 
-    public Message(int messageSize) {
+    private void setTripTimeToServer() {
+        this.tripTimeToServer = this.timeMessageArrived - this.timeMessageCreated;
+    }
+
+    private void setTripTimeFromServer() {
+        this.tripTimeFromServer = this.timeMessageReturned - this.timeMessageArrived;
+    }
+
+    public int getMessageGroupId() {
+        return this.messageGroupId;
+    }
+
+    public Message(int messageSize, int messageId, int messageGroup) {
+        messageGroupId = messageGroup;
+        id = messageId;
         message = generateMessage(messageSize);
-        timeMessageCreated = (int) System.currentTimeMillis();
+        setTimeMessageCreated((int) System.currentTimeMillis());
     }
 }
 

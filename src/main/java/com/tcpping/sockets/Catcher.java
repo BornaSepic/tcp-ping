@@ -29,9 +29,6 @@ public class Catcher {
 
                     receivedMessage.setTimeMessageArrived((int) System.currentTimeMillis());
 
-                    System.out.println(receivedMessage.message);
-                    System.out.println(receivedMessage.timeMessageCreated);
-
                     objectOutputStream.writeObject(receivedMessage);
 
                 } catch (IOException i) {

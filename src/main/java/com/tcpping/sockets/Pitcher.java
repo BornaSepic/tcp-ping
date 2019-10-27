@@ -17,7 +17,9 @@ public class Pitcher {
     private int messageGroupsSent = 0;
 
     private void sendMessages() throws IOException {
-        displayStatistics(messageGroupsSent);
+        if (messageGroupsSent > 0) {
+            displayStatistics(messageGroupsSent);
+        }
         messageGroupsSent++;
 
         for (int i = 0; i < messagesPerSecond; i++) {
@@ -44,31 +46,42 @@ public class Pitcher {
         List<Message> relevantMessages = new ArrayList<Message>();
 
         for (Message message : returnedMessages) {
-            System.out.println(message.messageGroupId + " test " + messageGroupId);
             if (message.getMessageGroupId() == messageGroupId) {
                 relevantMessages.add(message);
             }
         }
 
+        int totalTripTime = relevantMessages.stream()
+                .reduce(0, (tripTime, message) -> tripTime + message.totalTripTime, Integer::sum);
+        float averageTotalTripTime = (float) totalTripTime  / relevantMessages.size();
+
+        int totalTripTimeToServer = relevantMessages.stream()
+                .reduce(0, (tripTime, message) -> tripTime + message.tripTimeToServer, Integer::sum);
+        float averageTotalTripTimeToServer = (float) totalTripTimeToServer  / relevantMessages.size();
+
+        int totalTripTimeFromServer = relevantMessages.stream()
+                .reduce(0, (tripTime, message) -> tripTime + message.tripTimeFromServer, Integer::sum);
+        float averageTotalTripTimeFromServer = (float) totalTripTimeFromServer  / relevantMessages.size();
+
         LocalDateTime now = LocalDateTime.now();
         System.out.println("Time: " + now.getHour() + ":" + now.getMinute() + ":" + now.getSecond());
         System.out.println("Total messages sent: " + messagesSent);
         System.out.println("Messages per second: " + messagesPerSecond);
-        System.out.println("Average total trip time: " + relevantMessages.size());
-        System.out.println("Average time to server: " + 1);
-        System.out.println("Average time from server: " + 1);
+        System.out.println("Average total trip time: " + averageTotalTripTime + "ms");
+        System.out.println("Average time to server: " + averageTotalTripTimeToServer + "ms");
+        System.out.println("Average time from server: " + averageTotalTripTimeFromServer + "ms");
     }
 
     public void Client(String ip, int port, int mps) {
         messagesPerSecond = mps;
         Socket socket;
+
         try {
             socket = new Socket(ip, port);
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(out);
             objectInputStream = new ObjectInputStream(in);
-
         } catch (IOException u) {
             throw new Error(u);
         }

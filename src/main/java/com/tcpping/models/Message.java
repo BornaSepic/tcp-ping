@@ -13,6 +13,7 @@ public class Message implements Serializable {
 
     public int tripTimeToServer;
     public int tripTimeFromServer;
+    public int totalTripTime;
 
     private String generateMessage(int messageSize) {
         StringBuilder sb = new StringBuilder(messageSize);
@@ -45,6 +46,11 @@ public class Message implements Serializable {
 
     private void setTripTimeFromServer() {
         this.tripTimeFromServer = this.timeMessageReturned - this.timeMessageArrived;
+        setTotalTripTime();
+    }
+
+    private void setTotalTripTime() {
+        this.totalTripTime = this.tripTimeFromServer + this.tripTimeToServer;
     }
 
     public int getMessageGroupId() {

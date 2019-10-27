@@ -4,6 +4,8 @@ import com.tcpping.sockets.Catcher;
 import com.tcpping.sockets.Pitcher;
 import org.apache.commons.cli.*;
 
+import java.io.IOException;
+
 public class TCPPing {
     private int port = 9000;
     private String ip = "192.168.0.1";
@@ -27,7 +29,7 @@ public class TCPPing {
         return parser.parse( options, args);
     }
 
-    public static void main(String[] args) throws MissingArgumentException {
+    public static void main(String[] args) throws MissingArgumentException, IOException {
         TCPPing app = new TCPPing();
         CommandLine cmd;
 

@@ -74,11 +74,12 @@ public class Pitcher {
 
     public void Client(String ip, int port, int mps) {
         messagesPerSecond = mps;
+        Socket socket;
 
-        try (Socket socket = new Socket(ip, port);
-             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-             DataInputStream in = new DataInputStream(socket.getInputStream())) {
-
+        try {
+            socket = new Socket(ip, port);
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in = new DataInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(out);
             objectInputStream = new ObjectInputStream(in);
         } catch (IOException u) {

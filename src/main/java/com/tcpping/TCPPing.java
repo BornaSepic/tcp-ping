@@ -53,7 +53,12 @@ public class TCPPing {
         }
 
         if (cmd.hasOption("size")) {
-            app.size = Integer.parseInt(cmd.getOptionValue("size"));
+            int size = Integer.parseInt(cmd.getOptionValue("size"));
+            if (size >= 3000 || size <= 50) {
+                size = 300;
+            }
+
+            app.size = size;
         }
 
         if (cmd.hasOption("c")) {

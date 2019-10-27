@@ -9,20 +9,14 @@ import java.net.Socket;
 public class Catcher {
 
     public void Server(int port) {
-        ObjectInputStream objectInputStream;
-        ObjectOutputStream objectOutputStream;
-
-        try {
-            ServerSocket server = new ServerSocket(port);
-
-            Socket socket = server.accept();
-
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
-            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        try (ServerSocket server = new ServerSocket(port);
+             Socket socket = server.accept();
+             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
 
             String message = "";
 
-            while (!message.equals("OVER")) {
+            while (!"OVER".equals(message)) {
                 try {
                     Message receivedMessage = (Message) objectInputStream.readObject();
                     message = receivedMessage.message;
@@ -32,7 +26,7 @@ public class Catcher {
                     objectOutputStream.writeObject(receivedMessage);
 
                 } catch (IOException i) {
-                    throw new Error(i);
+                    throw new RuntimeException("Exception while reading from socket...");
                 }
             }
         } catch (IOException | ClassNotFoundException i) {

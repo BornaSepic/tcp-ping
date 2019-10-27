@@ -53,18 +53,18 @@ public class Pitcher {
 
         int totalTripTime = relevantMessages.stream()
                 .reduce(0, (tripTime, message) -> tripTime + message.totalTripTime, Integer::sum);
-        float averageTotalTripTime = (float) totalTripTime  / relevantMessages.size();
+        float averageTotalTripTime = (float) totalTripTime / relevantMessages.size();
 
         int totalTripTimeToServer = relevantMessages.stream()
                 .reduce(0, (tripTime, message) -> tripTime + message.tripTimeToServer, Integer::sum);
-        float averageTotalTripTimeToServer = (float) totalTripTimeToServer  / relevantMessages.size();
+        float averageTotalTripTimeToServer = (float) totalTripTimeToServer / relevantMessages.size();
 
         int totalTripTimeFromServer = relevantMessages.stream()
                 .reduce(0, (tripTime, message) -> tripTime + message.tripTimeFromServer, Integer::sum);
-        float averageTotalTripTimeFromServer = (float) totalTripTimeFromServer  / relevantMessages.size();
+        float averageTotalTripTimeFromServer = (float) totalTripTimeFromServer / relevantMessages.size();
 
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("Time: " + now.getHour() + ":" + now.getMinute() + ":" + now.getSecond());
+        System.out.println(String.format("Time: %d:%d:%d", now.getHour(),  now.getMinute(), now.getSecond()));
         System.out.println("Total messages sent: " + messagesSent);
         System.out.println("Messages per second: " + messagesPerSecond);
         System.out.println("Average total trip time: " + averageTotalTripTime + "ms");
@@ -74,12 +74,11 @@ public class Pitcher {
 
     public void Client(String ip, int port, int mps) {
         messagesPerSecond = mps;
-        Socket socket;
 
-        try {
-            socket = new Socket(ip, port);
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream(socket.getInputStream());
+        try (Socket socket = new Socket(ip, port);
+             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+             DataInputStream in = new DataInputStream(socket.getInputStream())) {
+
             objectOutputStream = new ObjectOutputStream(out);
             objectInputStream = new ObjectInputStream(in);
         } catch (IOException u) {

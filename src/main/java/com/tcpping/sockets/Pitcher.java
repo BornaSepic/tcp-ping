@@ -14,6 +14,7 @@ public class Pitcher {
 
     private int messagesSent = 0;
     private int messagesPerSecond = 30;
+    private int messageSize = 30;
     private int messageGroupsSent = 0;
 
     private void sendMessages() throws IOException {
@@ -23,7 +24,7 @@ public class Pitcher {
         messageGroupsSent++;
 
         for (int i = 0; i < messagesPerSecond; i++) {
-            Message messageInstance = new Message(10, messagesSent, messageGroupsSent);
+            Message messageInstance = new Message(messageSize, messagesSent, messageGroupsSent);
             objectOutputStream.writeObject(messageInstance);
             messagesSent++;
         }
@@ -72,8 +73,9 @@ public class Pitcher {
         System.out.println("Average time from server: " + averageTotalTripTimeFromServer + "ms");
     }
 
-    public void Client(String ip, int port, int mps) {
+    public void Client(String ip, int port, int mps, int size) {
         messagesPerSecond = mps;
+        messageSize = size;
         Socket socket;
 
         try {

@@ -20,6 +20,7 @@ public class TCPPing {
         options.addOption("bind", true, "IP Address to bind to");
         options.addOption("mps", true, "Messages per second");
         options.addOption("size", true, "Size of the message in bytes");
+        options.addOption("hostname", false, "Hostname for the machine the server is running on");
 
         return options;
     }
@@ -63,7 +64,7 @@ public class TCPPing {
         } else if (cmd.hasOption("p")) {
 
             Pitcher pitcher = new Pitcher();
-            pitcher.Client(app.ip, app.port, app.mps);
+            pitcher.Client(app.ip, app.port, app.mps, app.size);
 
         } else {
             throw new MissingArgumentException("You need to select a valid mode for the application to run in");
